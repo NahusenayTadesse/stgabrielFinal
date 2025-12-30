@@ -150,29 +150,6 @@
 			</div>
 		{/if}
 	</SingleView>
-	{#if data.reciepts?.length}
-		<div
-			class="mt-4 flex w-full flex-col items-start
-   justify-center rounded-md bg-white shadow-lg dark:bg-black dark:shadow-md dark:shadow-gray-900"
-		>
-			<div
-				class="from-dark flex w-full flex-col items-start justify-center rounded-lg bg-gradient-to-r to-black px-8 py-6 text-white lg:w-8/10"
-			>
-				<h1 class="text-start">Booking Fee Paids</h1>
-			</div>
-
-			<div class="mt-4 flex w-full flex-col lg:w-8/10">
-				<DataTable data={data.reciepts} {columns} {search} />
-				<Button
-					size="lg"
-					class="w-lg"
-					href="/dashboard/sales/appointments/{data.appointmentsList.id}"
-				>
-					<Plus /> Add Sales for Customer</Button
-				>
-			</div>
-		</div>
-	{/if}
 
 	{#snippet fe(
 		label = '',
@@ -256,62 +233,27 @@
 
 	<Card.Root class="mt-8 flex w-full flex-col gap-4 lg:w-xl">
 		<Card.Header class="mb-4">
-			<Card.Title class="text-center text-2xl">Confirm Appointment</Card.Title>
+			<Card.Title class="text-center text-2xl">Change Booking Status</Card.Title>
 		</Card.Header>
 		<Card.Content>
 			<form
 				use:enhance
 				method="post"
-				enctype="multipart/form-data"
 				class="flex w-full flex-col gap-4 rounded-md border p-4"
 				action="?/confirmAppointment"
 			>
-				{@render fe(
-					'Booking Fee Amount',
-					'amount',
-					'number',
-					'Enter The Amount Booking Fee in Birr',
-					true,
-					'0'
-				)}
-				<input type="hidden" name="appointmentId" value={data.appointmentsList.id} />
-				{@render combo('paymentMethod', data.allMethods)}
-				{@render selects('paymentStatus', paymentStatus)}
-				<!-- <div class="flex w-full flex-col justify-start gap-2">
-					<Label for="image" class="capitalize">Upload Reciept or Screenshot of Booking Fee</Label>
-					<div class="relative flex flex-row gap-2">
-						<Upload class="absolute top-2 right-16 bottom-0.5 h-6 w-6" />
-						<Input
-							type="file"
-							name="image"
-							accept="image/*,application/pdf"
-							bind:files={$file}
-							multiple={false}
-						/>
-						<Button
-							type="button"
-							size="icon"
-							variant="outline"
-							title="Clear file input"
-							onclick={() => ($file = 0)}
-						>
-							<X />
-						</Button>
-					</div>
-					{#if $errors.image}
-						<span class="text-red-500">{$errors.image}</span>
-					{/if}
-				</div> -->
-
-				<FileUpload {form} {errors} name="image" />
-				<!-- {@render fe('Upload Reciept or Screenshot of Booking Fee', 'image', 'file', 'Enter Name', true)} -->
+				{@render selects('status', [
+					{ value: 'Pending', name: 'Pending' },
+					{ value: 'Confirmed', name: 'Confirmed' },
+					{ value: 'Cancelled', name: 'Cancelled' }
+				])}
 
 				<Button type="submit" class="mt-4">
 					{#if $delayed}
-						<LoadingBtn name="Confirming Appointment" />
+						<LoadingBtn name="Confirming Booking" />
 					{:else}
 						<Plus class="h-4 w-4" />
-						Confirm Appointment
+						Confirm Bookings
 					{/if}
 				</Button>
 			</form>

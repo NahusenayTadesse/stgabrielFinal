@@ -16,15 +16,7 @@ import { editAppointment } from '$lib/ZodSchema';
 // }
 
 import { db } from '$lib/server/db';
-import {
-	appointments,
-	appointmentStatuses,
-	customers,
-	paymentMethods,
-	transactionBookingFee,
-	transactions,
-	user
-} from '$lib/server/db/schema';
+import { bookings } from '$lib/server/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { setError, fail, message } from 'sveltekit-superforms';
@@ -36,90 +28,34 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const { id } = params;
 	const form = await superValidate(zod4(schema));
 	const editForm = await superValidate(zod4(editAppointment));
-	const customersList = await db
-		.select({
-			value: customers.id,
-			name: sql<string>`concat(${customers.firstName}, ' ', ${customers.lastName}, ' - ', ${customers.phone})`
-		})
-		.from(customers)
-		.where(and(eq(customers.isActive, true), eq(customers.branchId, locals?.user?.branch)));
 
+	const appointmentsList = await db;
 	const appointmentsList = await db
 		.select({
-			id: appointments.id,
-			customerName: sql<string>`TRIM(CONCAT(${customers.firstName}, ' ', COALESCE(${customers.lastName}, '')))`,
-			customerId: customers.id,
-			phone: customers.phone,
-			date: sql<string>`DATE_FORMAT(${appointments.appointmentDate}, '%Y-%m-%d')`,
-			time: sql<string>`DATE_FORMAT(${appointments.appointmentTime}, '%H:%i')`,
-			bookedBy: user.name,
-			status: appointmentStatuses.name,
-			notes: appointments.notes,
+			extraSettings: bookings.id,
+			customerName: bookings.name,
+			phone: bookings.phone,
+			email: bookings.email,
+			status: bookings.status,
+			date: sql<string>`DATE_FORMAT(${bookings.date}, '%Y-%m-%d')`,
+			time: sql<string>`DATE_FORMAT(${bookings.time}, '%H:%i')`,
+			notes: bookings.notes,
 			bookedAt: sql<string>`DATE_FORMAT(${appointments.createdAt}, '%Y-%m-%d')`,
 			paidAmount: sql<number>`COALESCE(SUM(${transactions.amount}), 0)`
 		})
-		.from(appointments)
-		.leftJoin(customers, eq(appointments.customerId, customers.id))
-		.leftJoin(user, eq(appointments.createdBy, user.id))
-		.leftJoin(appointmentStatuses, eq(appointments.statusId, appointmentStatuses.id))
-		.leftJoin(transactionBookingFee, eq(appointments.id, transactionBookingFee.appointmentId))
-		.leftJoin(transactions, eq(transactionBookingFee.transactionId, transactions.id))
-		.where(and(eq(appointments.branchId, locals?.user?.branch), eq(appointments.id, id)))
-		.groupBy(
-			appointments.id,
-			customers.firstName,
-			customers.lastName,
-			customers.phone,
-			appointmentStatuses.name,
-			user.name,
-			appointments.appointmentDate,
-			appointments.appointmentTime,
-			appointments.notes,
-			appointments.createdAt
-		)
+		.from(bookings)
+		.where(eq(bookings.id, id))
 		.then((rows) => rows[0]);
-
-	const reciepts = await db
-		.select({
-			id: customers.id,
-			customerName: sql<string>`TRIM(CONCAT(${customers.firstName}, ' ', COALESCE(${customers.lastName}, '')))`,
-			appointmentDate: sql<string>`DATE_FORMAT(${appointments.appointmentDate}, '%Y-%m-%d')`,
-			amount: transactions.amount,
-			booker: user.id,
-			recievedBy: user.name,
-			paidAt: sql<string>`DATE_FORMAT(${transactions.createdAt}, '%Y-%m-%d')`,
-			recieptLink: transactions.recieptLink
-		})
-		.from(transactionBookingFee)
-		.innerJoin(appointments, eq(transactionBookingFee.appointmentId, appointments.id))
-		.leftJoin(customers, eq(appointments.customerId, customers.id))
-		.leftJoin(transactions, eq(transactionBookingFee.transactionId, transactions.id))
-		.leftJoin(user, eq(transactions.createdBy, user.id))
-
-		.where(and(eq(appointments.branchId, locals?.user?.branch), eq(appointments.id, id)))
-		.orderBy(transactions.createdAt);
-
-	const allMethods = await db
-		.select({
-			value: paymentMethods.id,
-			name: paymentMethods.name,
-			description: paymentMethods.description
-		})
-		.from(paymentMethods)
-		.where(eq(paymentMethods.isActive, true));
 
 	return {
 		appointmentsList: appointmentsList ?? [],
-		customersList: customersList ?? [],
 		form,
-		allMethods: allMethods ?? [],
-		reciepts: reciepts ?? [],
 		editForm
 	};
 };
 
 export const actions: Actions = {
-	confirmAppointment: async ({ request, cookies, locals }) => {
+	confirmAppointment: async ({ request, cookies, params }) => {
 		const form = await superValidate(request, zod4(schema));
 
 		if (!form.valid) {
@@ -128,52 +64,17 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		const { appointmentId, paymentStatus, amount, paymentMethod, image } = form.data;
+		const { status } = form.data;
 
 		try {
-			//      const imageName = `${generateUserId()}${path.extname(image.name)}`;
+			let { id } = params;
 
-			// const file_path: string = path.normalize(
-			//   path.join(FILES_DIR, imageName));
+			await db.update(bookings).set({ status }).where(eq(bookings.id, id));
 
-			//     const nodejs_wstream = fs.createWriteStream(file_path);
-			//     const web_rstream = image.stream();
-			//     const nodejs_rstream = Readable.fromWeb(web_rstream);
-			//     await pipeline(nodejs_rstream, nodejs_wstream).catch(() => {
-			//       return fail(500);
-			//     });
-
-			const imageName = await saveUploadedFile(image);
-
-			const [transaction] = await db
-				.insert(transactions)
-				.values({
-					amount,
-					paymentMethodId: paymentMethod,
-					recieptLink: imageName,
-					paymentStatus,
-					branchId: locals.user?.branch,
-					createdBy: locals.user?.id
-				})
-				.$returningId();
-
-			await db.insert(transactionBookingFee).values({
-				fee: amount,
-				transactionId: transaction.id,
-				appointmentId
-			});
-
-			await db
-				.update(appointments)
-				.set({ statusId: 2, updatedBy: locals.user?.id })
-				.where(eq(appointments.id, appointmentId));
-
-			delete form.data.image;
-
-			setFlash({ type: 'success', message: 'Successfully Confirmed Appointment ' }, cookies);
+			setFlash({ type: 'success', message: 'Booking Status Changed successfully.' }, cookies);
 			return message(form, {
 				type: 'success',
-				text: 'Appointment confirmed successfully.'
+				text: 'Booking Status Changed successfully.'
 			});
 		} catch (err) {
 			setFlash({ type: 'error', message: `Unexpected Error: ${err.message}` }, cookies);
