@@ -28,13 +28,11 @@
 	let singleTable = $derived([
 		{ name: 'Name', value: data.appointmentsList.customerName },
 		{ name: 'Phone', value: data.appointmentsList.phone },
-		{ name: 'Booked By', value: data.appointmentsList.bookedBy },
+		{ name: 'Email', value: data.appointmentsList.email },
 		{ name: 'Status', value: data.appointmentsList.status },
 		{ name: 'Date', value: data.appointmentsList.date },
 		{ name: 'Time', value: data.appointmentsList.time },
-		{ name: 'Notes', value: data.appointmentsList.notes },
-		{ name: 'Booked At', value: data.appointmentsList.bookedAt },
-		{ name: 'Paid Amount', value: data.appointmentsList.paidAmount }
+		{ name: 'Notes', value: data.appointmentsList.notes }
 	]);
 
 	const { form, errors, enhance, delayed, capture, restore, message } = superForm(data.form, {
@@ -64,7 +62,9 @@
 		{ value: 'partially_paid', name: 'Partial Payment' }
 	];
 
-	$editForm.customerId = Number(data.appointmentsList.customerId);
+	$editForm.customerName = data.appointmentsList.customerName;
+	$editForm.phone = data.appointmentsList.phone;
+	$editForm.email = data.appointmentsList.email;
 	$editForm.appointmentDate = data.appointmentsList.date;
 	$editForm.appointmentTime = data.appointmentsList.time;
 	$editForm.notes = data.appointmentsList.notes || undefined;
@@ -91,11 +91,11 @@
 </script>
 
 <svelte:head>
-	<title>Appointment Details</title>
+	<title>Booking Details</title>
 </svelte:head>
 
 {#if data.appointmentsList.customerName}
-	<SingleView title="Appointment Details">
+	<SingleView title="Booking Details">
 		<div class="mt-4 flex w-full flex-row items-start justify-start gap-2 pl-4">
 			<Button onclick={() => (edit = !edit)}>
 				{#if !edit}
@@ -121,23 +121,19 @@
 					id="edit"
 					method="post"
 				>
-					{@render combo2('customerId', data.customersList)}
+					{@render fe2('Customer Name', 'customerName', 'text', 'Enter Customer Name', true)}
+					{@render fe2('Phone', 'phone', 'text', 'Enter Phone Number', true)}
+					{@render fe2('Email', 'email', 'email', 'Enter Email Address', true)}
 
-					<DatePicker2 bind:data={$editForm.appointmentDate} />
-					<input
-						type="hidden"
-						name="appointmentDate"
-						bind:value={$editForm.appointmentDate}
-						id=""
-					/>
+					<DatePicker2 bind:data={$editForm.date} />
+					<input type="hidden" name="date" bind:value={$editForm.date} id="" />
 
 					{#if $editErrors.appointmentDate}
-						<span class="text-red-500">{$editErrors.appointmentDate}</span>
+						<span class="text-red-500">{$editErrors.date}</span>
 					{/if}
 
-					{@render fe2('Appointment Time', 'appointmentTime', 'time', '', true)}
+					{@render fe2('Appointment Time', 'time', 'time', '', true)}
 					{@render fe2('Notes', 'notes', 'text', '')}
-					<input hidden name="appointmentId" value={data.appointmentsList.id} />
 					<Button form="edit" type="submit" class="mt-4">
 						{#if $editDelayed}
 							<LoadingBtn name="Saving Changes" />

@@ -11,5 +11,5 @@
 
 	<h3 class="font-head text-2xl text-red-600">{@html page.error?.message}</h3>
 
-	<Button href="/dashboard">Back to Dashboard</Button>
+	<Button href="/">Home</Button>
 </div>

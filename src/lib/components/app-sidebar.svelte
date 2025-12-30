@@ -1,31 +1,15 @@
 <script lang="ts">
-	import {
-		User,
-		Users,
-		UserRoundCog,
-		ChartArea,
-		Calendar,
-		SquareChartGantt,
-		IdCardLanyard,
-		LayoutDashboard,
-		ShoppingBasket,
-		Container,
-		Banknote,
-		BanknoteArrowUp,
-		ScanLine
-	} from '@lucide/svelte';
+	import { User, Calendar, MessageSquareMore, LayoutDashboard } from '@lucide/svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { bgGradient, selectItem } from '$lib/global.svelte';
 	import { fade } from 'svelte/transition';
 	import { useSidebar } from '$lib/components/ui/sidebar/index.js';
-	import { ScrollArea } from './ui/scroll-area/index';
 	const navigation = [
 		{ title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
-		{ title: 'Customers', url: '/dashboard/customers', icon: Users },
 		{ title: 'Bookings', url: '/dashboard/bookings', icon: Calendar },
-		{ title: 'Messages', url: '/dashboard/messages', icon: Calendar },
+		{ title: 'Messages', url: '/dashboard/messages', icon: MessageSquareMore },
 		{ title: 'Users', url: '/dashboard/users', icon: User }
 	];
 

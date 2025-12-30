@@ -86,7 +86,6 @@
 	</Card.Header>
 	<Card.Content>
 		<form use:enhance action="?/addUser" id="main" class="flex flex-col gap-4" method="POST">
-			{@render fe('Full Name', 'name', 'text', 'Enter the full name of new user', true)}
 			{@render fe('Email', 'email', 'email', 'Enter the email user', true)}
 			{@render fe('Password', 'password', 'password', 'Enter password', true)}
 

@@ -39,59 +39,5 @@ export const columns = [
 				onclick: column.getToggleSortingHandler()
 			}),
 		sortable: true
-	},
-	{
-		accessorKey: 'role',
-		header: ({ column }) =>
-			renderComponent(DataTableSort, {
-				name: 'Role',
-				onclick: column.getToggleSortingHandler()
-			}),
-
-		sortable: true
-	},
-	{
-		accessorKey: 'status',
-		header: ({ column }) =>
-			renderComponent(DataTableSort, {
-				name: 'Status',
-				onclick: column.getToggleSortingHandler()
-			}),
-		sortable: true,
-		cell: ({ row }) => {
-			const status = row.original.status;
-			return status ? 'Active' : 'Inactive';
-		}
-	},
-
-	{
-		accessorKey: 'permissionsCount',
-		header: ({ column }) =>
-			renderComponent(DataTableSort, {
-				name: 'Permissions Count',
-				onclick: column.getToggleSortingHandler()
-			}),
-		sortable: true,
-		cell: (info) => `${info.getValue()} Permissions` // always “day”
-	},
-
-	{
-		accessorKey: 'createdAt',
-		header: ({ column }) =>
-			renderComponent(DataTableSort, {
-				name: 'Added At',
-				onclick: column.getToggleSortingHandler()
-			}),
-		sortable: true,
-		cell: (info) => info.getValue().toLocaleDateString() // always “day”
-	},
-
-	{
-		accessorKey: 'actions',
-		header: 'Actions',
-		cell: ({ row }) => {
-			// You can pass whatever you need from `row.original` to the component
-			return renderComponent(DataTableActions, { id: row.original.id, name: row.original.name });
-		}
 	}
 ];

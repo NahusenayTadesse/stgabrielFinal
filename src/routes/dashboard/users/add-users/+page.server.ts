@@ -4,7 +4,7 @@ import { fail } from '@sveltejs/kit';
 
 import { addUserSchema as schema } from '$lib/ZodSchema';
 import { db } from '$lib/server/db';
-import { roles, user } from '$lib/server/db/schema/';
+import { user } from '$lib/server/db/schema';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types.js';
 import { hash } from '@node-rs/argon2';
@@ -33,7 +33,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const { name, email, role, password } = form.data;
+		const { email, password } = form.data;
 
 		const username = extractUsername(email);
 
@@ -50,12 +50,9 @@ export const actions: Actions = {
 			await db.insert(user).values({
 				id,
 				username,
-				name,
 				email,
-				roleId: role,
-				passwordHash,
-				createdBy: locals.user?.id,
-				branchId: locals.user?.branch
+
+				passwordHash
 			});
 
 			setFlash({ type: 'success', message: 'User Successfully Created' }, cookies);

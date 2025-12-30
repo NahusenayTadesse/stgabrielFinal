@@ -1,25 +1,17 @@
-import { redirect } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
-import { getCurrentMonthRange } from "$lib/global.svelte";
-
+import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { getCurrentMonthRange } from '$lib/global.svelte';
 
 export const load: PageServerLoad = async () => {
-   
-   redirect (303, `/dashboard/appointments/all-appointments/${getCurrentMonthRange()}`);
-}
-
-
+	redirect(303, `/dashboard/bookings/all-appointments/${getCurrentMonthRange()}`);
+};
 
 // import { db } from "$lib/server/db";
 // import { appointments, appointmentStatuses, customers, transactionBookingFee, transactions, user  } from "$lib/server/db/schema";
 // import { eq, asc, and, sql } from "drizzle-orm";
 // import type { PageServerLoad } from "./$types";
 
-
-
 // export const load: PageServerLoad = async ({  locals }) => {
-
-
 
 //         let appointmentsList = await db.select(
 //            {
@@ -28,7 +20,7 @@ export const load: PageServerLoad = async () => {
 //             phone: customers.phone,
 //             status: appointmentStatuses.name,
 //             bookedById: user.id,
-//             bookedBy: user.name, 
+//             bookedBy: user.name,
 //             date: sql<string>`DATE_FORMAT(${appointments.appointmentDate}, '%Y-%m-%d')`,
 //             time: sql<string>`DATE_FORMAT(${appointments.appointmentTime}, '%H:%i')`,
 //             notes: appointments.notes,

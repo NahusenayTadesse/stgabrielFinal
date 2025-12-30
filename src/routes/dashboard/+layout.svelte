@@ -20,7 +20,7 @@
 			<Sidebar.Trigger class="rounded-lg bg-white p-4 dark:bg-black" />
 			<div class="flex flex-row items-center gap-4">
 				<DarkMode />
-				<AvatarSettings data={data?.role?.name} />
+				<AvatarSettings data={data?.userName} />
 			</div>
 		</div>
 		<div class="w-full p-2 pt-24 pb-24 lg:pt-4 lg:pb-4">

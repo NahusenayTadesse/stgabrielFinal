@@ -8,10 +8,6 @@ export const loginSchema = z.object({
 export type LoginSchema = typeof loginSchema;
 
 export const addUserSchema = z.object({
-	name: z
-		.string()
-		.min(1, 'Full Name is required')
-		.max(100, 'Full Name must be less than 100 characters'),
 	email: z.email('Invalid email address').min(1, 'Email is required'),
 	password: z
 		.string()
@@ -259,18 +255,23 @@ export const existingCustomerAppointment = z.object({
 export type ExistingCustomerAppointmentForm = z.infer<typeof existingCustomerAppointment>;
 
 export const editAppointment = z.object({
-	customerId: z.number('Customer is required'),
-	appointmentDate: z.string().refine(
+	customerName: z.string('Customer is required'),
+	phone: z
+		.string()
+		.min(7, 'Phone number is too short')
+		.max(15, 'Phone number is too long')
+		.regex(/^[0-9+\-()\s]+$/, 'Invalid phone number'),
+	email: z.email('Invalid email address'),
+	date: z.string().refine(
 		(val) => {
 			const d = new Date(val);
 			return !isNaN(d.getTime()) && d >= today;
 		},
 		{ message: 'Date must be today or in the future' }
 	),
-	appointmentTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:MM)'),
+	time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:MM)'),
 
-	notes: z.string().max(500, 'Notes must be less than 500 characters').optional().or(z.literal('')),
-	appointmentId: z.number()
+	notes: z.string().max(500, 'Notes must be less than 500 characters').optional().or(z.literal(''))
 });
 
 // TypeScript type inference

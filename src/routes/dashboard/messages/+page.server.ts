@@ -12,7 +12,7 @@ export const load: PageServerLoad = async () => {
 			name: contactMessages.name,
 			phone: contactMessages.phone,
 			email: contactMessages.email,
-			message: contactMessages.message,
+			message: contactMessages.messages,
 			date: contactMessages.createdAt
 		})
 		.from(contactMessages);

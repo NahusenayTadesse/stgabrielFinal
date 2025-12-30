@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeBase64url, encodeHexLowerCase } from '@oslojs/encoding';
 import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema/';
+import * as table from '$lib/server/db/schema';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
@@ -31,7 +31,7 @@ export async function validateSessionToken(token: string) {
 	const [result] = await db
 		.select({
 			// Adjust user table here to tweak returned data
-			user: { id: table.user.id, username: table.user.username, branch: table.user.branchId },
+			user: { id: table.user.id, username: table.user.username },
 			session: table.session
 		})
 		.from(table.session)
@@ -71,10 +71,9 @@ export function setSessionTokenCookie(event: RequestEvent, token: string, expire
 	event.cookies.set(sessionCookieName, token, {
 		expires: expiresAt,
 		path: '/',
-		httpOnly: true,          // prevent JS access (important for auth)
-		sameSite: 'lax',         // 'lax' is fine for dev; 'none' if testing cross-origin
-		secure: false            // must be false in dev (HTTP)
-
+		httpOnly: true, // prevent JS access (important for auth)
+		sameSite: 'lax', // 'lax' is fine for dev; 'none' if testing cross-origin
+		secure: false // must be false in dev (HTTP)
 	});
 }
 
@@ -82,7 +81,7 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 	event.cookies.delete(sessionCookieName, {
 		path: '/',
 		httpOnly: true,
-        sameSite: 'lax',
-        secure: false
+		sameSite: 'lax',
+		secure: false
 	});
 }

@@ -1,19 +1,7 @@
-// import fs from 'node:fs';
-// import path from 'node:path';
-// import { generateUserId } from '$lib/global.svelte';
-// import { Readable } from 'node:stream';
-// import { pipeline } from 'node:stream/promises';
-import { env } from '$env/dynamic/private';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { bookingFeeSchema as schema } from '$lib/zodschemas/appointmentSchema';
 import { editAppointment } from '$lib/ZodSchema';
-
-// const FILES_DIR: string = env.FILES_DIR ?? '.tempFiles';
-
-// if (!fs.existsSync(FILES_DIR)) {
-//   fs.mkdirSync(FILES_DIR, { recursive: true });
-// }
 
 import { db } from '$lib/server/db';
 import { bookings } from '$lib/server/db/schema';
@@ -21,15 +9,12 @@ import { eq, and, sql } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { setError, fail, message } from 'sveltekit-superforms';
 import { setFlash } from 'sveltekit-flash-message/server';
-import { saveUploadedFile } from '$lib/server/upload';
-import { text } from 'drizzle-orm/sqlite-core';
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
 	const form = await superValidate(zod4(schema));
 	const editForm = await superValidate(zod4(editAppointment));
 
-	const appointmentsList = await db;
 	const appointmentsList = await db
 		.select({
 			extraSettings: bookings.id,
@@ -39,9 +24,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			status: bookings.status,
 			date: sql<string>`DATE_FORMAT(${bookings.date}, '%Y-%m-%d')`,
 			time: sql<string>`DATE_FORMAT(${bookings.time}, '%H:%i')`,
-			notes: bookings.notes,
-			bookedAt: sql<string>`DATE_FORMAT(${appointments.createdAt}, '%Y-%m-%d')`,
-			paidAmount: sql<number>`COALESCE(SUM(${transactions.amount}), 0)`
+			notes: bookings.notes
 		})
 		.from(bookings)
 		.where(eq(bookings.id, id))
@@ -85,7 +68,7 @@ export const actions: Actions = {
 		}
 	},
 
-	editAppointment: async ({ request, cookies, locals }) => {
+	editAppointment: async ({ request, cookies, params }) => {
 		const form = await superValidate(request, zod4(editAppointment));
 
 		if (!form.valid) {
@@ -93,33 +76,32 @@ export const actions: Actions = {
 			setFlash({ type: 'error', message: 'Please check your form data.' }, cookies);
 			return fail(400, { form });
 		}
-		const { customerId, appointmentId, appointmentDate, appointmentTime, notes } = form.data;
+		const { customerName, date, time, notes } = form.data;
 
-		if (!customerId) {
-			setError(form, 'customerId', 'Customer is required.');
+		if (!customerName) {
+			setError(form, 'customerName', 'Customer is required.');
 			setFlash({ type: 'error', message: 'Customer Name is required.' }, cookies);
 			return fail(400, { form });
 		}
 
-		const newDate = new Date(appointmentDate);
-
+		const newDate = new Date(date);
+		const { id } = params;
 		try {
 			await db
-				.update(appointments)
+				.update(bookings)
 				.set({
-					customerId,
-					appointmentDate: newDate,
-					appointmentTime,
-					notes,
-					updatedBy: locals?.user?.id
+					name: customerName,
+					date: newDate,
+					time,
+					notes
 				})
-				.where(eq(appointments.id, appointmentId));
+				.where(eq(bookings.id, id));
 
 			// Stay on the same page and set a flash message
-			setFlash({ type: 'success', message: 'Appointment updated Successfully Added' }, cookies);
+			setFlash({ type: 'success', message: 'Booking updated Successfully' }, cookies);
 			return message(form, {
 				type: 'success',
-				text: 'Appointment updated Successfully Added'
+				text: 'Booking updated Successfully'
 			});
 		} catch (err) {
 			console.error('Error' + err);
@@ -143,11 +125,11 @@ export const actions: Actions = {
 				return fail(400);
 			}
 
-			await db.delete(appointments).where(eq(appointments.id, id));
+			await db.delete(bookings).where(eq(bookings.id, id));
 
-			setFlash({ type: 'success', message: 'Appointment Deleted Successfully!' }, cookies);
+			setFlash({ type: 'success', message: 'Booking Deleted Successfully!' }, cookies);
 		} catch (err) {
-			console.error('Error deleting appointment:', err);
+			console.error('Error deleting booking:', err);
 			setFlash({ type: 'error', message: `Unexpected Error: ${err?.message}` }, cookies);
 			return fail(400);
 		}

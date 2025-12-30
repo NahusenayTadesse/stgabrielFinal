@@ -2,7 +2,7 @@ import { fail } from '@sveltejs/kit';
 import { eq, and } from 'drizzle-orm';
 
 import { db } from '$lib/server/db';
-import * as table from '$lib/server/db/schema/';
+import * as table from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
 import { message, superValidate, setError } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -33,7 +33,6 @@ export const actions: Actions = {
 			const result = await db
 				.select()
 				.from(table.user)
-				.where(and(eq(table.user.email, email), eq(table.user.isActive, true)))
 				.then((rows) => rows[0]);
 
 			if (!result) {

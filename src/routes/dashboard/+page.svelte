@@ -38,7 +38,9 @@
 		<!-- Stats Grid -->
 		<div class="mb-8 grid gap-6">
 			<AppointmentCard count={data.nofAppointments} />
-			<Button href="/dashboard/appointments"><ClipboardPen /> See All Bookings</Button>
+			<Button href="/dashboard/bookings" class="justify-self-start"
+				><ClipboardPen /> See All Bookings</Button
+			>
 		</div>
 
 		<!-- Reorder Items Grid -->
