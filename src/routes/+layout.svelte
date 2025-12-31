@@ -56,7 +56,50 @@
 
 <svelte:head>
 	<link rel="icon" href="/logo.png" />
-	<title>St Gabriel Cafe</title>
+	<meta
+		name="description"
+		content="St. Gabriel Ethiopian Delicatessen in London serves authentic, healthy Ethiopian cuisine made with fresh ingredients. A welcoming community spot celebrating rich tradition and bold flavors."
+	/>
+	<meta
+		name="keywords"
+		content="Ethiopian restaurant London, Ethiopian food London, Ethiopian cafe Kennington, injera London, healthy African cuisine, St Gabriel Cafe"
+	/>
+	<meta name="author" content="St Gabriel Cafe" />
+	<meta name="robots" content="index, follow" />
+	<link rel="canonical" href="https://saintgabrielcafe.com/" />
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="restaurant" />
+	<meta
+		property="og:title"
+		content="St. Gabriel Ethiopian Delicatessen | Authentic Ethiopian Cuisine in London"
+	/>
+	<meta
+		property="og:description"
+		content="Experience vibrant Ethiopian flavors at St. Gabriel Ethiopian Delicatessen in London. Authentic dishes crafted with fresh ingredients and tradition."
+	/>
+	<meta property="og:url" content="https://saintgabrielcafe.com/" />
+	<meta property="og:image" content="/images/injera.webp" />
+	<meta property="og:site_name" content="St Gabriel Cafe" />
+	<meta property="og:locale" content="en_GB" />
+
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta
+		name="twitter:title"
+		content="St. Gabriel Ethiopian Delicatessen | Authentic Ethiopian Cuisine in London"
+	/>
+	<meta
+		name="twitter:description"
+		content="Authentic Ethiopian cuisine in London. Fresh, healthy dishes inspired by rich Ethiopian tradition."
+	/>
+	<meta name="twitter:image" content="/images/injera.webp" />
+
+	<!-- Contact / Business Info -->
+	<meta name="geo.region" content="GB-LND" />
+	<meta name="geo.placename" content="London" />
+	<meta name="geo.position" content="51.4880;-0.1050" />
+	<meta name="ICBM" content="51.4880, -0.1050" />
 </svelte:head>
 
 {#if !page.url.pathname.startsWith('/dashboard')}

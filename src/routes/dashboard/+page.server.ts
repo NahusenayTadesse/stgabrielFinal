@@ -4,15 +4,14 @@ import { redirect } from 'sveltekit-flash-message/server';
 
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { bookings, contactMessages } from '$lib/server/db/schema';
+import { bookings } from '$lib/server/db/schema';
 import { and, eq, lte, sql } from 'drizzle-orm';
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async () => {
+	const today = new Date().toLocaleDateString('en-CA');
 	const noOfAppointments = await db
 		.select({ count: bookings.id })
 		.from(bookings)
-		.where(eq(bookings.date, new Date()));
-
-	const todayReport = await db;
+		.where(eq(bookings.date, today));
 
 	return {
 		nofAppointments: noOfAppointments.length

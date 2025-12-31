@@ -9,7 +9,8 @@
 		<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
 			<!-- Restaurant Info -->
 			<FooterSection title="">
-				<img src="/Logo.svg" alt="" />
+				<img src="/Logo.svg" alt="" class="block dark:hidden" />
+				<img src="/logo.png" alt="" class="hidden dark:block" />
 				<p class="mb-4 text-sm text-muted-foreground">
 					Authentic Ethiopian cuisine in the heart of London, serving traditional dishes with love
 					and heritage.

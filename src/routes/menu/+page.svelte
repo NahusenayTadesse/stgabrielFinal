@@ -16,6 +16,10 @@
 	let { data } = $props();
 </script>
 
+<svelte:head>
+	<title>Menu</title>
+</svelte:head>
+
 <div class="min-h-screen">
 	<!-- Hero Section -->
 	<HeroSection
