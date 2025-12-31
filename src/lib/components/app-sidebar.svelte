@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { User, Calendar, MessageSquareMore, LayoutDashboard } from '@lucide/svelte';
+	import { User, Calendar, MessageSquareMore, Utensils, LayoutDashboard } from '@lucide/svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
@@ -9,6 +9,7 @@
 	const navigation = [
 		{ title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
 		{ title: 'Bookings', url: '/dashboard/bookings', icon: Calendar },
+		{ title: 'Menu', url: '/dashboard/menu', icon: Utensils },
 		{ title: 'Messages', url: '/dashboard/messages', icon: MessageSquareMore },
 		{ title: 'Users', url: '/dashboard/users', icon: User }
 	];

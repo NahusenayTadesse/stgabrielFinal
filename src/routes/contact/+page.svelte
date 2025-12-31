@@ -14,7 +14,8 @@
 		PhoneIcon,
 		MailIcon,
 		ClockIcon,
-		NavigationIcon
+		NavigationIcon,
+		Loader
 	} from '@lucide/svelte';
 	import HeroSection from '$lib/components/HeroSection.svelte';
 
@@ -28,17 +29,20 @@
 		{
 			icon: MapPinIcon,
 			title: 'Address',
-			details: ['154 Newington Butts', 'Kennington, London', 'SE11 4RN']
+			details: ['154 Newington Butts', 'Kennington, London', 'SE11 4RN'],
+			link: 'https://maps.app.goo.gl/ofx2Uc9TL9rmo9D3A'
 		},
 		{
 			icon: PhoneIcon,
 			title: 'Phone',
-			details: ['+44 20 7587 0199', 'Available during opening hours']
+			details: ['+44 20 7587 0199', 'Available during opening hours'],
+			link: 'tel:+442075870199'
 		},
 		{
 			icon: MailIcon,
 			title: 'Email',
-			details: ['info@stgabrielcafe.co.uk', "We'll respond within 24 hours"]
+			details: ['info@stgabrielcafe.com', "We'll respond within 24 hours"],
+			link: 'mailto:info@stgabrielcafe.com'
 		}
 	];
 	let { data } = $props();
@@ -48,9 +52,20 @@
 		{ day: 'Sunday', hours: '1:00 PM - 9:00 PM' }
 	];
 
-	const { form, errors, enhance, delayed, allErrors } = superForm(data.form, {
+	const { form, errors, message, enhance, delayed, allErrors } = superForm(data.form, {
 		resetForm: true,
 		validators: zod4Client(schema)
+	});
+
+	import { toast } from 'svelte-sonner';
+	$effect(() => {
+		if ($message) {
+			if ($message.type === 'error') {
+				toast.error($message.text);
+			} else {
+				toast.success($message.text);
+			}
+		}
 	});
 </script>
 
@@ -108,12 +123,14 @@
 				{#each contactInfo as info}
 					<Card class="text-center transition-shadow hover:shadow-md">
 						<CardHeader>
-							<div
-								class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-secondary to-accent"
-							>
-								<info.icon class="h-6 w-6 text-white" />
-							</div>
-							<CardTitle>{info.title}</CardTitle>
+							<a href={info.link} target="_blank">
+								<div
+									class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-secondary to-accent"
+								>
+									<info.icon class="h-6 w-6 text-white" />
+								</div>
+								<CardTitle>{info.title}</CardTitle>
+							</a>
 						</CardHeader>
 						<CardContent class="space-y-2">
 							{#each info.details as detail}
@@ -235,8 +252,8 @@
 				<h2 class="mb-6 text-3xl font-bold">Transportation</h2>
 			</div>
 
-			<div class="grid gap-6 md:grid-cols-3">
-				<Card>
+			<div class="w-1/2 justify-self-center">
+				<!-- <Card>
 					<CardHeader>
 						<CardTitle>Public Transport</CardTitle>
 						<CardDescription>Easy access via London's transport network</CardDescription>
@@ -276,7 +293,7 @@
 							<span class="text-sm">Free parking after 6:30 PM</span>
 						</div>
 					</CardContent>
-				</Card>
+					</Card> -->
 
 				<Card>
 					<CardHeader>

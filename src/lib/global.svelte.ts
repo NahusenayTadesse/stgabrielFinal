@@ -137,3 +137,13 @@ export function generatePassword(
 
 	return password;
 }
+
+export const formatGBP = (price: string | number): string => {
+	const num = typeof price === 'string' ? parseFloat(price) : price;
+	return new Intl.NumberFormat('en-GB', {
+		style: 'currency',
+		currency: 'GBP',
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2
+	}).format(num);
+};

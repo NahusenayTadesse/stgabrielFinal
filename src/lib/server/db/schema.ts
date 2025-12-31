@@ -1,4 +1,13 @@
-import { mysqlTable, int, varchar, datetime, timestamp, date, time } from 'drizzle-orm/mysql-core';
+import {
+	mysqlTable,
+	int,
+	varchar,
+	datetime,
+	timestamp,
+	date,
+	time,
+	decimal
+} from 'drizzle-orm/mysql-core';
 
 export const user = mysqlTable('user', {
 	id: varchar('id', { length: 255 }).primaryKey(),
@@ -31,13 +40,14 @@ export const bookings = mysqlTable('bookings', {
 
 export const menuCategory = mysqlTable('category', {
 	id: int('id').primaryKey().autoincrement(),
-	name: varchar('name', { length: 50 }).notNull(),
+	name: varchar('name', { length: 50 }).notNull().unique(),
 	description: varchar('description', { length: 255 })
 });
 
 export const menu = mysqlTable('menu', {
 	id: int('id').primaryKey().autoincrement(),
-	name: varchar('name', { length: 50 }).notNull(),
+	name: varchar('name', { length: 50 }).notNull().unique(),
+	price: decimal('price', { precision: 10, scale: 2 }).notNull().default('0'),
 	image: varchar('image', { length: 100 }),
 	categoryId: int('category_id')
 		.notNull()

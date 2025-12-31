@@ -1,19 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import {
-		Calendar,
-		Container,
-		LayoutDashboard,
-		ShoppingBasket,
-		SquareChartGantt
-	} from '@lucide/svelte';
+	import { Calendar, LayoutDashboard, Utensils, User, MessageSquareMore } from '@lucide/svelte';
 
 	const mobNav = [
-		{ title: 'Dashboard', url: '/dashboard/', icon: LayoutDashboard },
-		{ title: 'Appointments', url: '/dashboard/appointments', icon: Calendar },
-		{ title: 'Products', url: '/dashboard/products', icon: ShoppingBasket },
-		{ title: 'Services', url: '/dashboard/services', icon: SquareChartGantt },
-		{ title: 'Supplies', url: '/dashboard/supplies', icon: Container }
+		{ title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
+		{ title: 'Bookings', url: '/dashboard/bookings', icon: Calendar },
+		{ title: 'Menu', url: '/dashboard/menu', icon: Utensils },
+		{ title: 'Messages', url: '/dashboard/messages', icon: MessageSquareMore },
+		{ title: 'Users', url: '/dashboard/users', icon: User }
 	];
 
 	const on = 'text-primary shadow-lg shadow-primary/20 bg-primary/10';

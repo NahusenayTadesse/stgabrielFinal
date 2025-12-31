@@ -1,7 +1,7 @@
     {
-    "name": "Suna Marketing Salon Management System",
-    "short_name": "Suna Marketing",
-    "start_url": "/dashboard",
+    "name": "St Gabriel Cafe",
+    "short_name": "St Gabriel Cafe",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#020618",

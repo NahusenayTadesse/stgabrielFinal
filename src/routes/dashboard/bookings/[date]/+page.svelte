@@ -44,7 +44,7 @@
 						bind:placeholder
 						bind:value
 						onValueChange={() => {
-							goto(`/dashboard/appointments/${value}`);
+							goto(`/dashboard/bookings/${value}`);
 							open = false;
 						}}
 						class="bg-transparent p-0"

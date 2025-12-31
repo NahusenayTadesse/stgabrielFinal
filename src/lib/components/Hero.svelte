@@ -15,9 +15,10 @@ bg-background bg-[url('/images/mobhero.webp')] bg-cover bg-center px-4 py-4 text
 			care.
 		</p>
 		<div class="flex justify-center gap-4 lg:justify-start">
-			<Button size="lg">Get Involved</Button>
+			<Button size="lg" href="/booking">Book a Table</Button>
 			<Button
 				variant="outline"
+				href="/about"
 				class="text-white ring-white lg:text-secondary lg:ring-secondary dark:text-white dark:ring-white"
 				size="lg">Learn More</Button
 			>

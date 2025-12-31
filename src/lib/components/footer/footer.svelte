@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Card } from '$lib/components/ui/card';
-	import { Badge } from '$lib/components/ui/badge';
 	import { MapPinIcon, PhoneIcon, MailIcon, HeartIcon } from '@lucide/svelte';
 	import FooterSection from './footer-section.svelte';
 	import SocialLinks from './social-link.svelte';
@@ -11,25 +9,28 @@
 		<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
 			<!-- Restaurant Info -->
 			<FooterSection title="">
-				<img src="/Logo.svg" alt="St Gabriel Logo" class="block dark:hidden" />
-				<img src="/logo.png" alt="St Gabriel Logo" class="hidden dark:block" />
+				<img src="/Logo.svg" alt="" />
 				<p class="mb-4 text-sm text-muted-foreground">
 					Authentic Ethiopian cuisine in the heart of London, serving traditional dishes with love
 					and heritage.
 				</p>
 				<div class="space-y-2 text-sm">
-					<div class="flex items-center gap-2">
+					<a
+						href="https://maps.app.goo.gl/ofx2Uc9TL9rmo9D3A"
+						target="_blank"
+						class="flex items-center gap-2"
+					>
 						<MapPinIcon class="h-4 w-4 text-primary" />
 						<span>154 Newington Butts, Kennington, London SE11 4RN</span>
-					</div>
-					<div class="flex items-center gap-2">
+					</a>
+					<a href="tel:+442075870199" target="_blank" class="flex items-center gap-2">
 						<PhoneIcon class="h-4 w-4 text-primary" />
 						<span>+44 20 7587 0199</span>
-					</div>
-					<div class="flex items-center gap-2">
+					</a>
+					<a target="_blank" href="mailto:info@stgabrielcafe.com" class="flex items-center gap-2">
 						<MailIcon class="h-4 w-4 text-primary" />
-						<span>info@stgabrielcafe.co.uk</span>
-					</div>
+						<span>info@stgabrielcafe.com</span>
+					</a>
 				</div>
 			</FooterSection>
 

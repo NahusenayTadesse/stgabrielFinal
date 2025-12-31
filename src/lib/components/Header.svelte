@@ -25,8 +25,8 @@
 		{ id: '/', label: 'Home' },
 		{ id: '/about', label: 'About' },
 		{ id: '/menu', label: 'Menu' },
-		{ id: '/contact', label: 'Contact' },
-		{ id: '/booking', label: 'Book Table' }
+		{ id: '/booking', label: 'Book Table' },
+		{ id: '/contact', label: 'Contact' }
 	];
 </script>
 

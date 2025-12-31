@@ -1,43 +1,82 @@
 <script lang="ts">
-	import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
-	import { Badge } from "$lib/components/ui/badge";
-	import { CalendarIcon, UsersIcon, ClockIcon, CheckIcon, Loader } from "@lucide/svelte";
-		import BookingInfo from "./booking-info.svelte";
-	import HeroSection from "$lib/components/HeroSection.svelte";
-	import { Button } from "$lib/components/ui/button";
-	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
-	import { Textarea } from "$lib/components/ui/textarea";
-	import { Select, SelectContent, SelectItem, SelectTrigger } from "$lib/components/ui/select";
-	import { Calendar } from "$lib/components/ui/calendar";
-    import * as Popover from "$lib/components/ui/popover/index.js";
-	import { CalendarDate, getLocalTimeZone, today } from "@internationalized/date";
-import { buttonVariants } from "$lib/components/ui/button/index.js";
-  import { superForm } from 'sveltekit-superforms'
-  import { reservationSchema, type ReservationInput } from './schema';
-	import { cn } from "$lib/utils";
-	import { zod4Client } from "sveltekit-superforms/adapters";
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardHeader,
+		CardTitle
+	} from '$lib/components/ui/card';
+	import { Badge } from '$lib/components/ui/badge';
+	import { CalendarIcon, UsersIcon, ClockIcon, CheckIcon, Loader } from '@lucide/svelte';
+	import BookingInfo from './booking-info.svelte';
+	import HeroSection from '$lib/components/HeroSection.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import { Textarea } from '$lib/components/ui/textarea';
+	import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
+	import { Calendar } from '$lib/components/ui/calendar';
+	import * as Popover from '$lib/components/ui/popover/index.js';
+	import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
+	import { superForm } from 'sveltekit-superforms';
+	import { reservationSchema, type ReservationInput } from './schema';
+	import { cn } from '$lib/utils';
+	import { zod4Client } from 'sveltekit-superforms/adapters';
 
-	let rows = 5
+	let rows = 5;
 	let { data } = $props();
 
-	const { form, errors, enhance, delayed } = superForm(data.form, {
+	const { form, errors, enhance, delayed, message } = superForm(data.form, {
 		validators: zod4Client(reservationSchema)
 	});
 
- let todayDate = today(getLocalTimeZone());
+	let todayDate = today(getLocalTimeZone());
 
- let date = $state(new CalendarDate(todayDate.year, todayDate.month, todayDate.day));	
+	let date = $state(new CalendarDate(todayDate.year, todayDate.month, todayDate.day));
 
-	const timeSlots = ["12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
+	const timeSlots = [
+		'12:00',
+		'12:30',
+		'13:00',
+		'13:30',
+		'14:00',
+		'14:30',
+		'17:00',
+		'17:30',
+		'18:00',
+		'18:30',
+		'19:00',
+		'19:30',
+		'20:00',
+		'20:30',
+		'21:00',
+		'21:30'
+	];
 
-	const partySizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
+	const partySizes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+'];
 
-$effect(()=> {
-	$form.date = date.toString();
-})
+	$effect(() => {
+		$form.date = date.toString();
+	});
 
-	const bookingFeatures = ["Instant confirmation", "Special dietary requirements", "Group bookings welcome", "Flexible cancellation policy"];
+	import { toast } from 'svelte-sonner';
+	$effect(() => {
+		if ($message) {
+			if ($message.type === 'error') {
+				toast.error($message.text);
+			} else {
+				toast.success($message.text);
+			}
+		}
+	});
+
+	const bookingFeatures = [
+		'Instant confirmation',
+		'Special dietary requirements',
+		'Group bookings welcome',
+		'Flexible cancellation policy'
+	];
 </script>
 
 <svelte:head>
@@ -46,59 +85,64 @@ $effect(()=> {
 
 <div class="min-h-screen">
 	<!-- Hero Section -->
-	<HeroSection title="Book Your Table" 
-	subtitle="Reserve Your Ethiopian Experience"
-	 description="Secure your spot at St. Gabriel Ethiopian Delicatessen and prepare for an authentic culinary journey through the flavors of Ethiopia."
-	  imageSrc="/images/photo (8).webp" />
+	<HeroSection
+		title="Book Your Table"
+		subtitle="Reserve Your Ethiopian Experience"
+		description="Secure your spot at St. Gabriel Ethiopian Delicatessen and prepare for an authentic culinary journey through the flavors of Ethiopia."
+		imageSrc="/images/photo (8).webp"
+	/>
 
 	<!-- Booking Section -->
 	<section class="py-16">
-		<div class="container mx-auto px-4 max-w-6xl">
-			<div class="text-center mb-12">
+		<div class="container mx-auto max-w-6xl px-4">
+			<div class="mb-12 text-center">
 				<Badge variant="secondary" class="mb-4">Make a Reservation</Badge>
-				<h2 class="text-3xl font-bold mb-6">Reserve Your Table</h2>
-				<p class="text-lg text-muted-foreground max-w-2xl mx-auto">Book your table in advance to ensure the best dining experience. We recommend reservations, especially for weekends and larger groups.</p>
+				<h2 class="mb-6 text-3xl font-bold">Reserve Your Table</h2>
+				<p class="mx-auto max-w-2xl text-lg text-muted-foreground">
+					Book your table in advance to ensure the best dining experience. We recommend
+					reservations, especially for weekends and larger groups.
+				</p>
 			</div>
 
-			<div class="grid lg:grid-cols-3 gap-8">
+			<div class="grid gap-8 lg:grid-cols-3">
 				<!-- Booking Form -->
 				<div class="lg:col-span-2">
 					{#snippet fe(
-	label = '',
-	name = '',
-	type = '',
-	placeholder = '',
-	required = false,
-	min = '',
-	max = ''
-)}
-	<div class="flex w-full flex-col justify-start gap-2">
-		<Label for={name}>{label}</Label>
-		<Input
-			{type}
-			{name}
-			{placeholder}
-			{required}
-			{min}
-			{max}
-			bind:value={$form[name]}
-			aria-invalid={$errors[name] ? 'true' : undefined}
-		/>
-		{#if $errors[name]}
-			<span class="text-red-500">{$errors[name]}</span>
-		{/if}
-	</div>
-{/snippet}
+						label = '',
+						name = '',
+						type = '',
+						placeholder = '',
+						required = false,
+						min = '',
+						max = ''
+					)}
+						<div class="flex w-full flex-col justify-start gap-2">
+							<Label for={name}>{label}</Label>
+							<Input
+								{type}
+								{name}
+								{placeholder}
+								{required}
+								{min}
+								{max}
+								bind:value={$form[name]}
+								aria-invalid={$errors[name] ? 'true' : undefined}
+							/>
+							{#if $errors[name]}
+								<span class="text-red-500">{$errors[name]}</span>
+							{/if}
+						</div>
+					{/snippet}
 
-<Card>
-	<CardHeader>
-		<CardTitle>Make a Reservation</CardTitle>
-		<CardDescription>Fill in your details to book your table</CardDescription>
-	</CardHeader>
-	<CardContent class="space-y-6">
-		<form  class="space-y-6" use:enhance method="post" >
-			<!-- Date and Time Selection -->
-				<!-- <div class="space-y-2">
+					<Card>
+						<CardHeader>
+							<CardTitle>Make a Reservation</CardTitle>
+							<CardDescription>Fill in your details to book your table</CardDescription>
+						</CardHeader>
+						<CardContent class="space-y-6">
+							<form class="space-y-6" use:enhance method="post">
+								<!-- Date and Time Selection -->
+								<!-- <div class="space-y-2">
 					<Label>Date</Label>
 					<Popover>
 						<PopoverTrigger>
@@ -115,67 +159,66 @@ $effect(()=> {
 					</Popover>
 				</div> -->
 
-<div class="grid md:grid-cols-2 gap-4">
-<div>
-	<Label class="mb-2">Date</Label>
-				<Popover.Root>
-  <Popover.Trigger
-    class={cn(
-      buttonVariants({
-        variant: "outline",
-        class: "justify-start w-full"
-      }),
-      !date && "text-muted-foreground"
-    )}
-  >  
-    <CalendarIcon /> {$form.date ? date.toString() : 'Select Appointment Date'}
-   </Popover.Trigger>
-    
-  <Popover.Content class="p-0 flex flex-wrap gap-1 border-t px-2 ">
-	
-	{#each [{ label: "Today", value: 0 }, { label: "Tomorrow", value: 1 }, { label: "In a week", value: 7 }] as preset (preset.value)}
-      <Button
-        variant="outline"
-        size="sm"
-        class="flex-1"
-        onclick={() => {
-          date = todayDate?.add({ days: preset.value });
-        }}
-      >
-        {preset.label}
-      </Button>
-    {/each}
-    <Calendar type="single" minValue={todayDate}  bind:value={date} />
+								<div class="grid gap-4 md:grid-cols-2">
+									<div>
+										<Label class="mb-2">Date</Label>
+										<Popover.Root>
+											<Popover.Trigger
+												class={cn(
+													buttonVariants({
+														variant: 'outline',
+														class: 'w-full justify-start'
+													}),
+													!date && 'text-muted-foreground'
+												)}
+											>
+												<CalendarIcon />
+												{$form.date ? date.toString() : 'Select Appointment Date'}
+											</Popover.Trigger>
 
-  </Popover.Content>
-</Popover.Root>
-	{#if $errors.date}
-			<span class="text-red-500">{$errors.date}</span>
-		{/if} 
+											<Popover.Content class="flex flex-wrap gap-1 border-t p-0 px-2 ">
+												{#each [{ label: 'Today', value: 0 }, { label: 'Tomorrow', value: 1 }, { label: 'In a week', value: 7 }] as preset (preset.value)}
+													<Button
+														variant="outline"
+														size="sm"
+														class="flex-1"
+														onclick={() => {
+															date = todayDate?.add({ days: preset.value });
+														}}
+													>
+														{preset.label}
+													</Button>
+												{/each}
+												<Calendar type="single" minValue={todayDate} bind:value={date} />
+											</Popover.Content>
+										</Popover.Root>
+										{#if $errors.date}
+											<span class="text-red-500">{$errors.date}</span>
+										{/if}
 
-		 <input type="hidden" name="date" bind:value={$form.date}>
-		</div>
+										<input type="hidden" name="date" bind:value={$form.date} />
+									</div>
 
-				<div class="space-y-2">
-					<Label>Time</Label>
-					<Select type="single" name="time" bind:value={$form.time}>
-						<SelectTrigger class="w-full">
-							<ClockIcon class="mr-2 h-4 w-4" />
-							{$form.time}
-						</SelectTrigger>
-						<SelectContent>
-							{#each timeSlots as time}
-								<SelectItem value={time}>{time}</SelectItem>
-							{/each}
-						</SelectContent>
-					</Select>
-					{#if $errors.time}
-			<span class="text-red-500">{$errors.time}</span>
-		{/if}
-				</div>
+									<div class="space-y-2">
+										<Label>Time</Label>
+										<Select type="single" name="time" bind:value={$form.time}>
+											<SelectTrigger class="w-full">
+												<ClockIcon class="mr-2 h-4 w-4" />
+												{$form.time}
+											</SelectTrigger>
+											<SelectContent>
+												{#each timeSlots as time}
+													<SelectItem value={time}>{time}</SelectItem>
+												{/each}
+											</SelectContent>
+										</Select>
+										{#if $errors.time}
+											<span class="text-red-500">{$errors.time}</span>
+										{/if}
+									</div>
 
-			<!-- Party Size -->
-			<!-- <div class="space-y-2">
+									<!-- Party Size -->
+									<!-- <div class="space-y-2">
 				<Label>Party Size</Label>
 				<Select type="single" bind:value={$form.partySize}>
 					<SelectTrigger class="w-full" >
@@ -194,46 +237,51 @@ $effect(()=> {
 				{#if $errors.time}
 			<span class="text-red-500">{$errors.time}</span>
 		{/if} -->
-			<!-- </div> -->
+									<!-- </div> -->
 
-			<!-- Contact Information -->
-				
-                {@render fe('Number of Guests', 'partySize', 'number', 'Enter the number of your party', true, "1", "40")}
-				{@render fe('Full Name', 'name', 'text', 'Enter Your Full Name', true )}
-				{@render fe('Email', 'email', 'email', 'Enter Your Email', true )}
-				{@render fe('Phone', 'phone', 'phone', '+44 20 10 10 10', true )}
-				
+									<!-- Contact Information -->
 
-			</div>
+									{@render fe(
+										'Number of Guests',
+										'partySize',
+										'number',
+										'Enter the number of your party',
+										true,
+										'1',
+										'40'
+									)}
+									{@render fe('Full Name', 'name', 'text', 'Enter Your Full Name', true)}
+									{@render fe('Email', 'email', 'email', 'Enter Your Email', true)}
+									{@render fe('Phone', 'phone', 'phone', '+44 20 10 10 10', true)}
+								</div>
 
-			<!-- Special Requests -->
-			<div class="space-y-2">
-				<Label for="requests">Special Requests</Label>
-				<Textarea id="requests" bind:value={$form.specialRequests} 
-				placeholder="Any dietary requirements, allergies, or special occasions..." 
-				{rows}
-		 />
-				{#if $errors.specialRequests}
-			<span class="text-red-500">{$errors.specialRequests}</span>
-		{/if}
-			</div>
-		
+								<!-- Special Requests -->
+								<div class="space-y-2">
+									<Label for="requests">Special Requests</Label>
+									<Textarea
+										id="requests"
+										bind:value={$form.specialRequests}
+										placeholder="Any dietary requirements, allergies, or special occasions..."
+										{rows}
+									/>
+									{#if $errors.specialRequests}
+										<span class="text-red-500">{$errors.specialRequests}</span>
+									{/if}
+								</div>
 
-			<!-- Submit Button -->
-			<Button type="submit" class="w-full" size="lg">
-				{#if $delayed}
-					<Loader class="animate-spin" /> 
+								<!-- Submit Button -->
+								<Button type="submit" class="w-full" size="lg">
+									{#if $delayed}
+										<Loader class="animate-spin" />
 
-					Confirming Reservation...
-				{:else}
-				
-				Confirm Reservation 
-			 {/if} 
-			</Button>
-		</form>
-	</CardContent>
-</Card>
-
+										Confirming Reservation...
+									{:else}
+										Confirm Reservation
+									{/if}
+								</Button>
+							</form>
+						</CardContent>
+					</Card>
 				</div>
 
 				<!-- Booking Information -->
@@ -244,7 +292,7 @@ $effect(()=> {
 					<Card>
 						<CardHeader>
 							<CardTitle class="flex items-center gap-2">
-								<CheckIcon class="w-5 h-5 text-primary" />
+								<CheckIcon class="h-5 w-5 text-primary" />
 								Why Book With Us
 							</CardTitle>
 						</CardHeader>
@@ -252,7 +300,7 @@ $effect(()=> {
 							<ul class="space-y-3">
 								{#each bookingFeatures as feature}
 									<li class="flex items-center gap-2">
-										<CheckIcon class="w-4 h-4 text-primary shrink-0" />
+										<CheckIcon class="h-4 w-4 shrink-0 text-primary" />
 										<span class="text-sm">{feature}</span>
 									</li>
 								{/each}
@@ -265,51 +313,61 @@ $effect(()=> {
 	</section>
 
 	<!-- Special Events -->
-	<section class="py-16 bg-muted/30">
-		<div class="container mx-auto px-4 max-w-4xl">
-			<div class="text-center mb-8">
+	<section class="bg-muted/30 py-16">
+		<div class="container mx-auto max-w-4xl px-4">
+			<div class="mb-8 text-center">
 				<Badge variant="secondary" class="mb-4">Special Events</Badge>
-				<h2 class="text-3xl font-bold mb-6">Private Dining & Events</h2>
-				<p class="text-lg text-muted-foreground mb-8">Planning a special celebration? We offer private dining experiences and can accommodate groups for birthdays, corporate events, and cultural celebrations.</p>
+				<h2 class="mb-6 text-3xl font-bold">Private Dining & Events</h2>
+				<p class="mb-8 text-lg text-muted-foreground">
+					Planning a special celebration? We offer private dining experiences and can accommodate
+					groups for birthdays, corporate events, and cultural celebrations.
+				</p>
 			</div>
 
-			<div class="grid md:grid-cols-3 gap-6">
+			<div class="grid gap-6 md:grid-cols-3">
 				<Card>
 					<CardHeader>
 						<CardTitle class="flex items-center gap-2">
-							<UsersIcon class="w-5 h-5 text-primary" />
+							<UsersIcon class="h-5 w-5 text-primary" />
 							Group Dining
 						</CardTitle>
 						<CardDescription>Perfect for celebrations</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<p class="text-sm text-muted-foreground">Groups of 8+ can enjoy our special group menu with traditional Ethiopian sharing platters.</p>
+						<p class="text-sm text-muted-foreground">
+							Groups of 8+ can enjoy our special group menu with traditional Ethiopian sharing
+							platters.
+						</p>
 					</CardContent>
 				</Card>
 
 				<Card>
 					<CardHeader>
 						<CardTitle class="flex items-center gap-2">
-							<CalendarIcon class="w-5 h-5 text-primary" />
+							<CalendarIcon class="h-5 w-5 text-primary" />
 							Cultural Events
 						</CardTitle>
 						<CardDescription>Ethiopian celebrations</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<p class="text-sm text-muted-foreground">Join us for special Ethiopian holidays and cultural events throughout the year.</p>
+						<p class="text-sm text-muted-foreground">
+							Join us for special Ethiopian holidays and cultural events throughout the year.
+						</p>
 					</CardContent>
 				</Card>
 
 				<Card>
 					<CardHeader>
 						<CardTitle class="flex items-center gap-2">
-							<ClockIcon class="w-5 h-5 text-primary" />
+							<ClockIcon class="h-5 w-5 text-primary" />
 							Coffee Ceremony
 						</CardTitle>
 						<CardDescription>Traditional experience</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<p class="text-sm text-muted-foreground">Book our traditional Ethiopian coffee ceremony for an authentic cultural experience.</p>
+						<p class="text-sm text-muted-foreground">
+							Book our traditional Ethiopian coffee ceremony for an authentic cultural experience.
+						</p>
 					</CardContent>
 				</Card>
 			</div>
