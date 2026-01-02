@@ -8,6 +8,7 @@ import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { fail } from 'sveltekit-superforms';
 import { setFlash } from 'sveltekit-flash-message/server';
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = params;
@@ -26,7 +27,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		.then((rows) => rows[0]);
 
 	if (!singleUser) {
-		return fail(404, { message: 'User not found' });
+		throw error(404, { message: 'User not found' });
 	}
 
 	return {

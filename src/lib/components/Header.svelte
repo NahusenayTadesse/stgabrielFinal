@@ -79,10 +79,12 @@
 							size="sm"
 							class={mobileMenuOpen ? 'justify-start' : ''}
 							href={item.id}
+							onclick={toggleMobileMenu}
 						>
 							{item.label}
 						</Button>
 					{/each}
+					<DarkMode />
 				</div>
 			</div>
 		{/if}
